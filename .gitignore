@@ -8,8 +8,11 @@
 
 .fw-comm-firebase-adminsdk-qgb36-22b1249d06.json
 
-### Control ###
+
+### Otros ###
 .control
+.App.log
+.Debug.log
 
 ### Linux ###
 *~
