@@ -1,0 +1,141 @@
+{% extends './template_es.html' %}
+
+{% block CustomMetas %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+{% endblock %}
+{% block title %}Panel - {{ current_user.ID }}{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/Panel.css')}}">
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1 id="h1"></h1>
+            {% block titleh1 %}
+            <script>
+                const h1 = document.getElementById('h1');
+                var text = '¡Bienvenido ' + '{{current_user.Nombre}}!';
+                let i = 0;
+
+                var intervalId = setInterval(function() {
+                    h1.textContent += text[i];
+                    i++;
+
+                    if (i === text.length) {
+                        clearInterval(intervalId);
+                    }
+                }, 50);
+            </script>
+            {% endblock %}
+    </header>
+    
+    <main>
+
+        
+        
+        <form action="/nuevo_personaje" method="POST" id="FormCharacter">
+            <h2>Nuevo Personaje</h2>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+            <input type="text" placeholder="Name Character" name="Name" minlength="3" maxlength="30">
+            <span id="rangeSpan">Edad: <i id="numar">20</i></span>
+            <input type="range" value="20" min="10" max="50" id="range" name="age">
+            <hr>
+            <select name="gender" id="gender">
+                <option value="Male" selected>Hombre</option>
+                <option value="Female">Mujer</option>
+            </select>
+
+            <select name="os" id="os">
+                <option value="Heterosexual" selected>Heterosexual</option>
+                <option value="Homosexual">Homosexual</option>
+                <option value="Bisexual">Bisexual</option>
+            </select>
+
+            <select name="class" id="class">
+                <option value="warrior" selected>Guerrero</option>
+                <option value="Assassing">Asesino</option>
+                <option value="Tank">Tanque</option>
+            </select>
+
+            <hr>
+
+            <button type="submit">Crear</button><button id="cancel" type="button">Cancelar</button>
+
+        </form>
+
+        <section id="sectionCharacters">
+            {% if current_user.Instancia_Personajes %}
+                {% if current_user.Instancia_Personajes|length == 1 %}
+                    {% for key, Instance in current_user.Instancia_Personajes.items() %}
+                    <article>
+                        <div>
+                            <img src="{{  url_for('static', filename='Assets/player.png') }}">
+                            <p style="text-align: center">{{ key }}</p>
+                            <p>Age: {{ Instance.Age }} years</p>
+                            <p>Sex. Inf: {{ Instance.Gender}} - {{ Instance.Orientation }}</p>
+                            <p>Class: {{ Instance.Class }}</p>
+                        </div>
+                        <p class="pcont"><span>Gold: </span> <span>{{ Instance.Gold}} G</span></p>
+                        <p class="pcont"><span>Level: </span> <span>{{ Instance.Level}}</span></p>
+                        <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna. {% endif %}</span></p>
+                        <p class="pcont"><span>Location: </span> <span>Undefined</span></p>
+
+                        <div class='p_control'>
+                            <a href="{{ url_for('Delete', to=Instance.Name) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
+                            <a href="">✔️</a>
+                        </div>
+                    </article>
+                    {% endfor %}
+
+                    <article id="notChars">
+                        <p>Ranura vacía</p>
+                        <button type="button" id="newCharacter">+</button>
+                    </article>
+
+                {% else %}
+
+                {% for key, Instance in current_user.Instancia_Personajes.items() %}
+                <article>
+                    <div>
+                        <img src="{{  url_for('static', filename='Assets/player.png') }}">
+                        <p style="text-align: center">{{ key }}</p>
+                        <p>Age: {{ Instance.Age }} years</p>
+                        <p>Sex. Inf: {{ Instance.Gender}} - {{ Instance.Orientation }}</p>
+                        <p>Class: {{ Instance.Class }}</p>
+                    </div>
+                    <p class="pcont"><span>Gold: </span> <span>{{ Instance.Gold}} G</span></p>
+                    <p class="pcont"><span>Level: </span> <span>{{ Instance.Level}}</span></p>
+                    <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna. {% endif %}</span></p>
+                    <p class="pcont"><span>Location: </span> <span>Undefined</span></p>
+
+                    <div class='p_control'>
+                        <a href="{{ url_for('Delete', to=Instance.Name) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
+                        <a href="">✔️</a>
+                    </div>
+                </article>
+                {% endfor %}
+
+                {% endif %}
+            
+
+            {% else %}
+                <article id="notChars">
+                    <p>Ranura vacía.</p>
+                    <button type="button" id="newCharacter">+</button>
+                </article>
+                <article id="notChars">
+                    <p>Ranura vacía</p>
+                    <button type="button" id="newCharacter">+</button>
+                </article>
+
+            {% endif %}
+    </section>
+
+    </main>
+
+    <a id="LogOutA" href="{{ url_for('logout')}}">Log Out</a>
+    <script src="{{ url_for('static', filename='JS/Panel.js')}}"></script>
+{% endblock %}

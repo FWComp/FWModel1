@@ -1,0 +1,228 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to bottom, 
+  rgb(5, 0, 39) 0%,   /* Verde oscuro */
+  #040087 20%,  /* Verde más claro */
+  #007fb5 40%,  /* Azul oscuro */
+  #fffcf5 60%,  /* Negro */
+  #5b2606 80%,  /* Marrón oscuro */
+  #311c04 90%,  /* Marrón más claro */
+  #000000 100%  /* Marrón oscuro nuevamente */
+);
+}
+
+header {
+    background: rgb(13, 29, 40);
+    width: 100%;
+    height: fit-content;
+    padding: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#sectionCharacters {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    border: 1px solid black;
+    padding: 8px;
+    border-radius: 10px;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+main #sectionCharacters #notChars {
+    max-width: 500px;
+    min-width: 200px;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0px 10px;
+}
+
+#notChars p {
+    font-size: 1.4em;
+    color: rgb(255, 255, 255);
+}
+
+#notChars button {
+    color: green;
+    background: none;
+    position: absolute;
+    bottom: 20px;
+    outline: none;
+    border: none;
+    padding: none;
+    font-size: 2.5em;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 1000;
+    font-style: bold;
+}
+
+main #sectionCharacters article {
+    min-width: 200px;
+    min-height: 200px;
+    max-width: 500px;
+    max-height: 500px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 9, 91, 0.382);
+    position: relative;
+    margin: 0px 10px;
+}
+
+main #sectionCharacters article div {
+    border-bottom: 4px solid black;
+    width: 100%;
+    height: 60px;
+}
+main #sectionCharacters article div p {
+    margin: 2px 0px;
+    color: white;
+    font-size: 0.7em;
+}
+
+main #sectionCharacters article img {
+    background-color: rgb(24, 26, 26);
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    float: left;
+    margin: 0px 5px;
+    margin-left: 0px;
+}
+
+main #sectionCharacters article .pcont {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 3px auto;
+    font-size: 0.8em;
+    color: gold;
+}
+
+main #sectionCharacters article .p_control {
+    background-color: rgb(0, 0, 0);
+    height: fit-content;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+main #sectionCharacters article .p_control a {
+    text-decoration: none;
+    width: fit-content;
+    height: fit-content;
+    font-size: 0.9em;
+    margin: 3px 3px;
+    background: transparent;
+}
+
+main #sectionCharacters article .p_control a img {
+    width: 20px;
+    height: 20px;
+}
+
+ /* Formulario */
+
+#LogOutA {
+    background: black;
+    padding: 8px 12px;
+    margin: 10px;
+    border-radius: 10px;
+    color: purple;
+    text-decoration: none;
+
+}
+
+main form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: rgba(79, 0, 0, 0.493);
+    width: 90%;
+    height: fit-content;
+    max-width: 600px;
+    min-width: 400px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+main form h2 {
+    color: white;
+    text-align: center;
+    margin: 20px 0px 40px 0px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+main form input {
+    background: rgb(255, 255, 255);
+    padding: 5px 10px;
+    margin: 5px 5px;
+    width: 80%;
+    border-radius: 15px;
+    border: 1px solid black;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+}
+
+main form span {
+    width: fit-content;
+    margin: 5px 10px;
+    margin-bottom: 0px;
+    font-family: 0.9em;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: wheat;
+}
+
+main form hr {
+    width: 95%;
+    margin: 7px auto;
+    background: black;
+}
+
+main form select {
+    width: 50%;
+    min-width: 100px;
+    max-width: 200px;
+    border-radius: 5px;
+    margin: 7px 7px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+main form button {
+    width: fit-content;
+    margin: 10px auto;
+    background: black;
+    color: aliceblue;
+    border: none;
+    border-radius: 10px;
+    padding: 6px 10px;
+}

@@ -1,0 +1,151 @@
+body {
+    display: flex;
+    flex-direction: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: rgb(1, 23, 33);
+    border-radius: 20px;
+    transform: scale(0.9);
+}
+
+body #LogIn {
+
+    display: flex;
+    flex-direction: column;
+    color: aliceblue;
+    padding: 10px 5px;
+    border-right: 4px solid black;
+    position: relative;
+}
+
+body #LogIn h2 {
+    text-align: center;
+    width: 100%;
+    margin: 10px 0px;
+}
+
+body #LogIn label {
+    margin: 7px 2px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body #LogIn input {
+    border-radius: 10px;
+    padding: 4px 3px;
+    margin-bottom: 5px;
+}
+
+body #LogIn div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 8px 0px;
+    padding: 5px;
+    font-size: 0.8em;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    align-items: center;
+}
+
+body #LogIn div input {
+    margin-right: 8px;
+}
+
+body #LogIn button {
+    width: fit-content;
+    padding: 5px 15px;
+    background-color: rgb(255, 154, 154);
+    border-radius: 10px;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+
+}
+
+body #SignUp {
+background: rgb(1, 23, 33);
+display: flex;
+flex-direction: column;
+color: aliceblue;
+padding: 10px 5px;
+border-radius: 20px;
+}
+
+body #SignUp h2 {
+text-align: center;
+width: 100%;
+margin: 10px 0px;
+}
+
+body #SignUp label {
+margin: 7px 2px;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body #SignUp input {
+border-radius: 10px;
+padding: 4px 3px;
+margin-bottom: 5px;
+}
+
+body #SignUp div {
+width: 100%;
+display: flex;
+flex-direction: row;
+justify-content: space-evenly;
+margin: 8px 0px;
+padding: 5px;
+font-size: 0.8em;
+font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+align-items: center;
+}
+
+body #SignUp div input {
+margin-right: 8px;
+}
+
+body #SignUp button {
+width: fit-content;
+padding: 5px 15px;
+background-color: rgb(255, 154, 154);
+margin: 0px auto;
+border-radius: 10px;
+
+}
+
+#dialog {
+    background: white;
+    border-radius: 10px;
+    border: 3px black solid;
+    box-shadow: 1px 1px 5px 5px rgb(24, 23, 23);
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-height: 100px;
+    min-width: 100px;
+}
+
+#dialog h2 {
+    background: black;
+    width: 100%;
+    color: white;
+    font-size: 1.0em;
+    text-align: center;
+    padding: 7px;
+}
+
+#dialog p {
+    color: rgb(0, 0, 0);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 0.9em;
+    padding: 5px;
+    font-weight: 100;
+}

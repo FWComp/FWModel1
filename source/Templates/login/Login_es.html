@@ -1,0 +1,71 @@
+{% extends './template_es.html' %}
+
+{% block title %}Acceso{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/Login.css')}}">
+{% endblock %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+
+{% if messages %}
+{% for message in messages %}
+<dialog id="dialog" >
+    <h2>{{ message[0]}}</h2>
+    <p>{{ message[1]}} </p>
+</dialog>
+
+<script>
+    document.getElementById('dialog').showModal()
+    setTimeout( () => {
+        document.getElementById('dialog').close()
+    }, 7000)
+</script>
+{% endfor %}
+
+{% endif %}
+
+{% endwith %}
+<div>
+<form id="LogIn" action="/login_method" method="POST">
+
+    <h2>Iniciar Sesión</h2>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+    <label for="L_Name">Nombre, Tel o Correo</label>
+    <input type="text" placeholder="Jhon 12343" name="nombre_login" maxlength="100" minlength="4" required>
+    
+    <label for="L_Password">Contraseña</label>
+    <input type="password" minlength="8" maxlength="100" name="contraseña_login" required>
+
+    <div><input type="checkbox" required><p>Al hacer click, aceptas nuestras cookies y uso de datos.</p></div>
+
+    <button type="submit">Iniciar Sesión</button>
+</form>
+
+<form id="SignUp" action="/signup_method" method="POST">
+
+    <h2>Crear Cuenta</h2>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+
+    <label for="R_Name">Nombre</label>
+    <input type="text" placeholder="Ryu" name="nombre_registro" maxlength="19" minlength="1" required>
+    
+    <label for="R_Alias">Apellido / Alias</label>
+    <input type="text" placeholder="Osaka" name="alias_registro" maxlength="19" minlength="1" required>
+    
+    <label for="R_Password">Contraseña</label>
+    <input type="password" minlength="8" maxlength="100" name="contraseña_registro" required>
+
+    <label for="R_Password">Repetir</label>
+    <input type="password" minlength="8" maxlength="100" name="contraseña_verificación" required>
+
+    <div><input type="checkbox" required><p>Al hacer click, aceptas nuestras cookies y uso de datos.</p></div>
+
+    <button type="submit">Crear Cuenta</button>
+</form>
+</div>
+
+<script src="{{ url_for('static', filename='JS/Login.js') }}" defer></script>
+{% endblock %}
