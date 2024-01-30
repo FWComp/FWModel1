@@ -1,0 +1,60 @@
+{% extends './template_es.html' %}
+
+{% block CustomMetas %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+{% endblock %}
+{% block title %}Panel - {{ current_user.ID }}{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/GAME.css')}}">
+{% endblock %}
+
+{% block body %}
+
+    {% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+    {% for message in messages %}
+    <dialog id="dialog" >
+        <h2>{{ message[0]}}</h2>
+        <p>{{ message[1]}} </p>
+    </dialog>
+
+    <script>
+        document.getElementById('dialog').showModal()
+        setTimeout( () => {
+            document.getElementById('dialog').close()
+        }, 7000)
+    </script>
+    {% endfor %}
+
+    {% endif %}
+
+    {% endwith %}
+
+
+
+
+
+
+    <header></header>
+    <main>
+        <div id="Inventario">
+            <table>
+                <tr>
+                    <th>ID</th><th>Nombre</th><th>Cantidad</th><th>Estado</th>
+                </tr>
+                <tr>
+                    {% for items, keys in current_user.current_character.Inventario.items() %} <tr> <td>{{ keys.ID}}</td> <td>{{ keys.Nombre}}</td> <td>{{ keys.cantidad}}</td> <td>{% if keys.equipado %} Equipado {% else %}  {% endif %}</td> </tr>{% endfor %}
+                </tr>
+            </table>
+        </div>
+
+
+    </main>
+
+
+
+{% endblock %}

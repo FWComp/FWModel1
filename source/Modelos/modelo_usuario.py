@@ -1,7 +1,11 @@
-from flask import jsonify
+from flask import jsonify, send_file
 from Herramientas import Tools
 from FireBaseControl import Objetos_firebase
 from .Entidades import Usuario
+import io
+import base64
+from google.cloud.exceptions import NotFound
+from flask import flash
 
 DBStore = Objetos_firebase.objeto_firestore()
 DBRealTime = Objetos_firebase.objeto_realtimedb()
@@ -11,6 +15,29 @@ class Modelo_U:
 
     usuario = None
 
+    @classmethod
+    def usar_bucket_principal(cls):
+        # REVIEW Error en Firebase Storage: No encuentra los archivos en la ruta del bucket. Manejar luego.
+        try:
+            blob = Storage.download('Forest1.mp3')
+
+            if not blob.exists():
+                raise FileNotFoundError(f'El objeto {blob.name} no existe en el bucket {Storage.name}')
+
+            # Convertir a base64
+            file_content = io.BytesIO(blob.download_as_bytes())
+            encoded_content = base64.b64encode(file_content.read()).decode('utf-8')
+
+            return encoded_content
+
+        except NotFound as not_found_error:
+            print(f"Error: {not_found_error}")
+            # Manejar el error de objeto no encontrado de manera específica
+            # Puedes lanzar una excepción personalizada o devolver un valor predeterminado
+            return None
+        except Exception as e:
+            raise e
+            
     @classmethod
     def usuario_existe(cls, id):
         if isinstance(id, str):
@@ -34,6 +61,7 @@ class Modelo_U:
                         Registro = data['Registro'],
                         Telefono = data['Telefono']
                     )
+
                     return cls.usuario
                 else:
                     return False
@@ -67,9 +95,9 @@ class Modelo_U:
     @classmethod
     def crear_personaje(cls, Nombre, Edad, Genero, orientacion, clase):
         weapons = {
-            'Assassing': 'Bokken',
-            'Tank': 'Small Maze',
-            'warrior': 'Small Sword'
+            'Assassing': 'bokken',
+            'Tank': 'small_maze',
+            'warrior': 'small_sword'
         }
 
         weapon = weapons.get(clase)
@@ -79,7 +107,11 @@ class Modelo_U:
             return False
 
         # Verificar límite de personajes y si el usuario ya tiene el personaje
-        if cls.usuario.Personajes and len(cls.usuario.Personajes) >= 2 and Nombre in cls.usuario.Personajes:
+        if cls.usuario.Personajes and len(cls.usuario.Personajes) >= 2:
+            flash(['Vaya...', 'No se pudo crear el personaje, ya tienes muchos. Intenta eliminar uno e intenta de nuevo.'])
+            return False
+        elif f'{cls.usuario.ID}_{Nombre}' in cls.usuario.Personajes:
+            flash(['Vaya...', f'Ya tienes un personaje llamado "{Nombre}". Intenta crear otro con un nombre diferente.'])
             return False
 
         try:
@@ -112,8 +144,8 @@ class Modelo_U:
             }
 
             docInventario = {
-                'Herb': 5,
-                'Antidote': 2,
+                'herb': 5,
+                'antidote': 2,
                 weapon: ['equipped', 1]
             }
 
@@ -122,19 +154,17 @@ class Modelo_U:
             }
 
             # Actualizar Personajes de Usuario.
-            doc_usuario = DBStore.collection('usuarios').document(cls.usuario.ID)
-            personajes = cls.usuario.Personajes
-            nuevo_personaje = {f'{cls.usuario.ID}_{Nombre}': [Tools.fecha(), Nombre]}
-            personajes.append(nuevo_personaje)
-
+            doc_usuario = DBStore.collection('usuarios').document(cls.usuario.ID) #NOTE Obtener el documento del usuario
+            id_personaje = f'{cls.usuario.ID}_{Nombre}'  #NOTE Asegurar ID único usando el nombre del usuario y el del personaje.
+            diccionario_personajes = cls.usuario.Personajes
+            diccionario_personajes[id_personaje] = [Tools.fecha(), Nombre]
             # Actualizar el campo 'Personajes' con la lista actualizada
-            doc_usuario.update({'Personajes': personajes})
-
-            # Crear el personaje.
-            id_personaje = f'{cls.usuario.ID}_{Nombre}'  # Asegurar ID único
-            doc_verificacion_usuario = DBStore.document(f'personajes/{id_personaje}')
+            doc_usuario.update({'Personajes': diccionario_personajes})
+            # Crear el personaje en el documento personajes de FireStore
+        
+            doc_personaje = DBStore.document(f'personajes/{id_personaje}') #NOTE Crear un nuevo documento del usuario
             
-            doc_personaje = {
+            coleccion_personaje = {
                 "Nombre": Nombre,
                 "Info": docInfo,
                 "Estatus": docEstatus,
@@ -143,8 +173,8 @@ class Modelo_U:
             }
 
             # Insertar el documento del personaje en Firestore
-            doc_verificacion_usuario.set(doc_personaje)
-
+            doc_personaje.set(coleccion_personaje)
+            cls.usuario.cargar_personajes()
             return True
         except Exception as e:
             # Manejar la excepción o simplemente dejar que se propague

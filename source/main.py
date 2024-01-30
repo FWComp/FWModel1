@@ -85,10 +85,29 @@ def index():
 @login_required
 def Panel():
     if current_user.is_authenticated:
-        Response = make_response(render_template('Panel/Panel.html'))
+        repro = True
+        if current_user.seguimiento == True and current_user.seguimiento != 'creando_personaje':
+            repro = False
+            flash(['Vaya', 'Se ha detectado una recarga de la página. Intenta no volver hacerlo.'])    
+        current_user.seguimiento == True
+        Response = make_response(render_template('Panel/Panel.html', repro=repro))
         return Response
     else:
         # REVIEW - Generar un mensaje Flash. #!REVIEW 
+        return redirect(url_for('index'))
+    
+@App.route('/Juego')
+@login_required
+def Juego():
+    if current_user.current_character and current_user.is_authenticated:
+        Response = make_response(render_template('GAME/game.html'))
+        return Response
+    
+    current_user.current_character = None
+
+    if current_user.is_authenticated:
+        return redirect(url_for('Panel'))
+    else:
         return redirect(url_for('index'))
     
 @App.after_request # NOTE Configurar Cache-Control para la ruta Panel para evitar posibles accesos no deseados por caché.
@@ -104,6 +123,8 @@ def logout():
     Modelo_U.Eliminar()
     logout_user()
     return redirect(url_for('index'))
+
+
 
 #!SECTION
     
@@ -125,6 +146,7 @@ def metodo_login():
             if Estado:
                 login_user(Estado)
                 logger_info.info(f'Un usuario. {Estado.ID} se ha loggeado correctamente.\n\nFecha: {Tools.fecha()}')
+                flash(['¡Bienvenido!', f'Te damos la bienvenida {current_user.ID}. Si ya has llegado hasta aquí es por que has aceptado nuestros terminos al loggearte.'])
                 return redirect(url_for('Panel'))
             elif Estado == False:
                 logger_info.info(f'Un usuario. {obtener_nombre} intentó iniciar sesión. Operación Fallidad por credenciales(Contraseña).\n\nFecha: {Tools.fecha()}')
@@ -151,6 +173,7 @@ def metodo_signup():
         logger_info.info(f'Un usuario. {current_user.id if current_user.is_authenticated else "Desconocido"} intentó manipular la URL en el login.\n\nFecha: {Tools.fecha()}')
         return redirect(url_for('Panel')) if current_user.is_authenticated else redirect(url_for('index'))
     elif request.method == "POST":
+
         try:
             lista_datos = [Tools.Limpiar(request.form['nombre_registro']), Tools.Limpiar(request.form['alias_registro']), request.form['contraseña_registro']]
 
@@ -162,6 +185,7 @@ def metodo_signup():
             if Estado:
                 login_user(Estado)
                 logger_info.info(f'Un usuario. {Estado.ID} ha creado su cuenta y ha iniciado sesión el: {Tools.fecha()}.\n\nFecha: {Tools.fecha()}')
+                flash(['¡Bienvenido!', f'Te damos la bienvenida {current_user.ID}. Si ya has llegado hasta aquí es por que has aceptado nuestros terminos al loggearte.'])
                 return redirect(url_for('index'))
             else:
                 flash(['Vaya', f'Ya existe una cuenta llamada {lista_datos[0]} {lista_datos[1]}'])
@@ -176,6 +200,7 @@ def metodo_signup():
 @App.route('/nuevo_personaje', methods=['POST'])
 def nuevo_personajes():
     if request.method == 'POST':
+        current_user.seguimiento = 'creando_personaje'
         try:
             Nombre = Tools.Limpiar(request.form['Name'])
             Edad = request.form['age']
@@ -190,6 +215,19 @@ def nuevo_personajes():
             logger_debug.exception(f'\n{current_user.ID} intentó crear un personaje. Pero hubo un error en: {str(e)}.\n\nFecha: {Tools.fecha()}')
     return redirect(url_for('Panel'))
 
+@App.route('/borrar_personaje', methods=['GET'])
+def borrar_personaje():
+    Name = request.args.get('to')
+    current_user.eliminar_personaje(Name)
+    return redirect(url_for('Panel'))
+
+@App.route('/usar_personaje', methods=['GET'])
+def usar_personaje():
+    Name = request.args.get('to')
+    current_user.usar_personaje(Name)
+    return redirect(url_for('Juego'))
+
+
 if __name__ == '__main__':
     configure = {
         'Appcnfg': {
@@ -200,4 +238,4 @@ if __name__ == '__main__':
     }
     App.config.update(configure['Appcnfg'])
     CSRF.init_app(App)
-    App.run()
+    App.run(host='0.0.0.0')

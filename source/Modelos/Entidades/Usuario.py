@@ -1,12 +1,13 @@
 from flask_login import UserMixin
 import random
 import asyncio
+from Herramientas import Tools
+from .Items import Item
 
-from ..modelos_uci import Modelo_C
+from ..modelos_C_I import Modelo_C, Modelo_I
 
 class Usuario(UserMixin):
-    def __init__(self, ID, Apellido, Nombre, Registro, Estado, personajes = [], Email = '', Telefono = ''):
-        print(personajes)
+    def __init__(self, ID, Apellido, Nombre, Registro, Estado, personajes = {}, Email = '', Telefono = ''):
         self.ID = ID
         self.Apellido = Apellido
         self.Nombre = Nombre
@@ -14,25 +15,44 @@ class Usuario(UserMixin):
         self.Registro = Registro
         self.Tel = Telefono
         self.current_character = None
-        self.Personajes = personajes if personajes else []
+        self.Personajes = personajes if personajes else {}
         self.Estado = Estado
         self.Eliminada = False
-        
+        self.seguimiento = False
         self.Instancia_Personajes = {}
 
         # SECTION: LLamadas
 
-        self.obtener_personajes()
+        self.cargar_personajes()
 
         # !SECTION
 
-    def obtener_personajes(self):
-        if self.Personajes and self.Estado == 'JJJJ':
-            personajes_info = Modelo_C.extraer_personajes(self.ID, self.Personajes)
-            for personaje in personajes_info:
-                Instancia = Personaje(personaje[0], personaje[1], personaje[2], personaje[3], personaje[4]) #Info, Estatus, Poderes, Inventario, ID/Nombre
-                if Instancia:
-                    self.Instancia_Personajes[personaje[4]] = Instancia # Nombre/Id del personaje.
+    def cargar_personajes(self):
+        try:
+            if self.Personajes:
+                personajes_data = Modelo_C.extraer_personajes(self.Personajes)
+                if personajes_data:
+                    for personaje_data in personajes_data:
+                        # Crear una instancia de Personaje
+                        nueva_instancia = Personaje(
+                            personaje_data['Info'],
+                            personaje_data['Estatus'],
+                            personaje_data['Poderes'],
+                            personaje_data['Inventario'],
+                            f"{self.ID}_{personaje_data['Nombre']}" # Identidicador
+                        )
+                        
+                        # Asignar la instancia al diccionario usando el nombre/ID del personaje como clave
+                        self.Instancia_Personajes[f'{self.ID}_{personaje_data["Nombre"]}'] = nueva_instancia
+        except Exception as e:
+            raise e
+        
+    def eliminar_personaje(self, id):
+        nuevo_diccionario = Modelo_C.eliminar(id, self.ID, self.Personajes)
+        self.Personajes = nuevo_diccionario
+        self.Instancia_Personajes = {}
+        self.cargar_personajes()
+
 
     def get_id(self):
         if self.Eliminada:
@@ -49,11 +69,87 @@ class Usuario(UserMixin):
     
     def EliminarInstancia(self):
         self.Eliminada = True
+    
+    def usar_personaje(self, id):
+        self.current_character = self.Instancia_Personajes[id]
+
 
     
 class Personaje:
-    def __init__(self, Info, Estatus, Poderes, Inventario, id):
+    def __init__(self, Info, Estatus, Poderes, Inventario, id): # Optimizar código: recursividad, documentación, adición, definición
+
+        #REVIEW - INFO hecho, Estatus hecho, Poderes faltante, Inventario a medias.
+        # print(Estatus)
+        # print(Poderes)
+        # print(Inventario)
+        # print(Info)
         self.ID = id
-        print(self.ID)
+        self.Genero = Info['Genero']
+        self.Edad = Info['Edad']
+        self.Nombre = Info['Nombre']
+        self.Orientacion = Info['Orientacion']
+        self.Clase = Tools.Limpiar(Info['Clase'])
+        self.Registro = Info['Registro']
+        
+        self.Oro = 0
+        self.Nivel = Estatus['Nivel']
+        self.PS = Estatus['PS']
+        self.PM = Estatus['PM']
+        self.EXP = Estatus['EXP']
+        self.Defensa =Estatus['Defensa']
+        self.Ataque = Estatus['Daño']
+        self.Agilidad = Estatus['Agilidad']
+
+        self.objetivo = self
+
+        self.efectos = {'envenenamiento_1': ['INSTANCIA']} # Prueba, #REVIEW -  Diseñar la plantilla de efectos y subirlo a Firebase RT.
+        
+        self.Equipamiento = {
+            'Arma': [self.Clase, self.Orientacion],
+            'Escudo': None,
+            'Cabeza': None,
+            'Botas': None,
+            'Torso': None,
+            'Piernas': None,
+        }
+
+        self.Inventario = {
+
+        }
+
+        self.Aliados = {
+            self.Nombre: self
+        }
+
+        self.obtener_items(Inventario)
+
+    def obtener_items(self, Inventario):
+        for item, info in Inventario.items():
+            data = Modelo_I.obtener_item_id(item)
+            ItemInstancia = Item(data, info, self, item)
+            self.Inventario[ItemInstancia.ID] = ItemInstancia
+    
+    def puntero(self):
+        return self
+
+    def eliminar_item(self, id, cantidad = 1):
+        try:
+            estado = self.Inventario[id].eliminar(cantidad)
+            if estado:
+                self.Inventario.pop(id, None)
+        except Exception as e:
+            print('Error ')
+            print(e)
+
+
+    def quitar_efecto(self, efectos):
+        num = []
+        for efecto in efectos:
+            if efecto in self.efectos:
+                self.efectos.pop(efecto, None)
+                num.append(efecto)
+        return num
+
+
         
                 

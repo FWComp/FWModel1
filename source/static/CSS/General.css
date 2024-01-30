@@ -4,10 +4,57 @@
     box-sizing: border-box;
     user-select: none;
     outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
     width: 100%;
     height: 100%;
     background: blanchedalmond;
+    overflow: hidden;
+}
+
+
+#dialog {
+    background: white;
+    border-radius: 10px;
+    border: 3px black solid;
+    box-shadow: 1px 1px 5px 5px rgb(24, 23, 23);
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-height: 100px;
+    min-width: 100px;
+    max-width: 400px;
+    width: fit-content;
+    height: fit-content;
+    overflow: hidden;
+}
+
+#dialog h2 {
+    background: black;
+    width: 100%;
+    color: white;
+    font-size: 1.0em;
+    text-align: center;
+    padding: 7px;
+}
+
+#dialog p {
+    color: rgb(0, 0, 0);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 0.9em;
+    padding: 5px;
+    font-weight: 100;
+}
+
+#dialog button {
+    padding: 4px 12px;
+    background: rgb(0, 0, 0);
+    display: block;
+    margin: 10px auto;
+    border: none;
+    color: white;
+    border-radius: 15px;
 }

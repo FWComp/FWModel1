@@ -12,12 +12,13 @@
 {% endblock %}
 
 {% block body %}
+
     <header>
         <h1 id="h1"></h1>
             {% block titleh1 %}
             <script>
                 const h1 = document.getElementById('h1');
-                var text = '¡Bienvenido ' + '{{current_user.Nombre}}!';
+                var text = '{{current_user.Nombre}} {{current_user.Apellido}}';
                 let i = 0;
 
                 var intervalId = setInterval(function() {
@@ -31,11 +32,66 @@
             </script>
             {% endblock %}
     </header>
-    
-    <main>
 
-        
-        
+    
+    <div id="control_panel">
+        <button id="stop_panel_song">X</button>
+    </div>
+
+    <audio loop volume="0.7" id="LoginSong" style="display:none" src="{{url_for('static', filename='Audio/LogIn.mp3')}}" type="audio/mp3"></audio>
+
+    {% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+    {% for message in messages %}
+    <dialog id="dialog" >
+        <h2>{{ message[0]}}</h2>
+        <p>{{ message[1]}} </p>
+        <button id="close_dialog">¡Ok!</button>
+    </dialog>
+
+    <script>
+        var audioElement = document.getElementById('LoginSong');
+        var playing = false
+        var repro = {{ repro|tojson|safe }};
+        if (repro) {Repro()}
+        function Repro() {
+            if (audioElement.canPlayType) {
+                audioElement.play();
+                playing = true
+            } else {
+                console.log('Error, el navegador no admite reproducción de audio.');
+            }
+        }
+        document.getElementById('stop_panel_song').addEventListener('click', () => {
+            if (playing) {
+                playing = false
+                audioElement.pause()
+            } else {
+                playing = true
+                audioElement.play()
+            }
+        })
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('dialog').showModal()
+            document.getElementById('close_dialog').addEventListener('click', () => {
+                document.getElementById('dialog').close()
+                if (!playing) {Repro()}
+            });
+        })
+        setTimeout( () => {
+            document.getElementById('dialog').close()
+            if (!playing) {Repro()}
+        }, 17000)
+    </script>
+    {% endfor %}
+
+    {% endif %}
+
+    {% endwith %}
+
+    <main>
+            
         <form action="/nuevo_personaje" method="POST" id="FormCharacter">
             <h2>Nuevo Personaje</h2>
             <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
@@ -66,76 +122,52 @@
 
         </form>
 
+        
         <section id="sectionCharacters">
+            <h2>Elije Un Personaje</h2>
             {% if current_user.Instancia_Personajes %}
-                {% if current_user.Instancia_Personajes|length == 1 %}
                     {% for key, Instance in current_user.Instancia_Personajes.items() %}
                     <article>
                         <div>
                             <img src="{{  url_for('static', filename='Assets/player.png') }}">
-                            <p style="text-align: center">{{ key }}</p>
-                            <p>Age: {{ Instance.Age }} years</p>
-                            <p>Sex. Inf: {{ Instance.Gender}} - {{ Instance.Orientation }}</p>
-                            <p>Class: {{ Instance.Class }}</p>
+                            <p style="text-align: center">{{ Instance.Nombre }}</p>
+                            <p>Age: {{ Instance.Edad }} years</p>
+                            <p>Sex. Inf: {{ Instance.Genero}} - {{ Instance.Orientacion }}</p>
+                            <p>Class: {{ Instance.Clase }}</p>
                         </div>
-                        <p class="pcont"><span>Gold: </span> <span>{{ Instance.Gold}} G</span></p>
-                        <p class="pcont"><span>Level: </span> <span>{{ Instance.Level}}</span></p>
-                        <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna. {% endif %}</span></p>
+
+                        <p class="pcont"><span>Gold: </span> <span>{{ Instance.Oro}} G</span></p>
+                        <p class="pcont"><span>Level: </span> <span>{{ Instance.Nivel}}</span></p>
+                        <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna {% endif %}</span></p>
                         <p class="pcont"><span>Location: </span> <span>Undefined</span></p>
 
                         <div class='p_control'>
-                            <a href="{{ url_for('Delete', to=Instance.Name) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
-                            <a href="">✔️</a>
+                            <a href="{{ url_for('borrar_personaje', to=Instance.ID) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
+                            <a href="{{ url_for('usar_personaje', to=Instance.ID)}}">✔️</a>
                         </div>
                     </article>
+                        {% if current_user.Instancia_Personajes|length == 1 %}
+                            <article id="notChars">
+                                <p>Ranura vacía.</p>
+                                <button type="button" id="newCharacter">+</button>
+                            </article>
+                        {% endif %}
                     {% endfor %}
-
-                    <article id="notChars">
-                        <p>Ranura vacía</p>
-                        <button type="button" id="newCharacter">+</button>
-                    </article>
-
-                {% else %}
-
-                {% for key, Instance in current_user.Instancia_Personajes.items() %}
-                <article>
-                    <div>
-                        <img src="{{  url_for('static', filename='Assets/player.png') }}">
-                        <p style="text-align: center">{{ key }}</p>
-                        <p>Age: {{ Instance.Age }} years</p>
-                        <p>Sex. Inf: {{ Instance.Gender}} - {{ Instance.Orientation }}</p>
-                        <p>Class: {{ Instance.Class }}</p>
-                    </div>
-                    <p class="pcont"><span>Gold: </span> <span>{{ Instance.Gold}} G</span></p>
-                    <p class="pcont"><span>Level: </span> <span>{{ Instance.Level}}</span></p>
-                    <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna. {% endif %}</span></p>
-                    <p class="pcont"><span>Location: </span> <span>Undefined</span></p>
-
-                    <div class='p_control'>
-                        <a href="{{ url_for('Delete', to=Instance.Name) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
-                        <a href="">✔️</a>
-                    </div>
-                </article>
-                {% endfor %}
-
-                {% endif %}
-            
-
             {% else %}
                 <article id="notChars">
                     <p>Ranura vacía.</p>
                     <button type="button" id="newCharacter">+</button>
                 </article>
+
                 <article id="notChars">
                     <p>Ranura vacía</p>
                     <button type="button" id="newCharacter">+</button>
                 </article>
-
             {% endif %}
     </section>
 
     </main>
 
     <a id="LogOutA" href="{{ url_for('logout')}}">Log Out</a>
-    <script src="{{ url_for('static', filename='JS/Panel.js')}}"></script>
+    <script src="{{ url_for('static', filename='JS/Panel.js')}}" defer></script>
 {% endblock %}

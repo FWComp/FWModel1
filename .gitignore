@@ -10,9 +10,10 @@
 
 
 ### Otros ###
-.control
 .App.log
 .Debug.log
+/Audio
+
 
 ### Linux ###
 *~
