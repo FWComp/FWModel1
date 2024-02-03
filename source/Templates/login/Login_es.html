@@ -1,6 +1,21 @@
 {% extends './template_es.html' %}
 
-{% block title %}Acceso{% endblock %}
+{% block title %}
+{% if current_user.idioma == 'es' %}
+Acceso
+{% elif current_user.idioma == 'pt' %}
+Acesso
+{% elif current_user.idioma == 'jp' %}
+Akusesu
+{% elif current_user.idioma == 'co' %}
+Jeopsog
+{% elif current_user.idioma == 'ch' %}
+Fǎngwèn
+{% else %}
+Access
+{% endif %}
+
+{% endblock %}
 
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename='CSS/Login.css')}}">
@@ -8,64 +23,239 @@
 
 {% block body %}
 
-{% with messages = get_flashed_messages() %}
-
-{% if messages %}
-{% for message in messages %}
-<dialog id="dialog" >
-    <h2>{{ message[0]}}</h2>
-    <p>{{ message[1]}} </p>
-</dialog>
-
-<script>
-    document.getElementById('dialog').showModal()
-    setTimeout( () => {
-        document.getElementById('dialog').close()
-    }, 7000)
-</script>
-{% endfor %}
-
-{% endif %}
-
-{% endwith %}
-<div>
+<!-- Primer formulario - Iniciar Sesión -->
+<!-- Primer formulario - Iniciar Sesión -->
 <form id="LogIn" action="/login_method" method="POST">
-
-    <h2>Iniciar Sesión</h2>
+    <h2>
+        {% if current_user.idioma == 'es' %}
+        Iniciar Sesión
+        {% elif current_user.idioma == 'pt' %}
+        Iniciar sessão
+        {% elif current_user.idioma == 'jp' %}
+        ログインする
+        {% elif current_user.idioma == 'co' %}
+        로그인  
+        {% elif current_user.idioma == 'ch' %}
+        登录
+        {% else %}
+        Sign In
+        {% endif %}
+    </h2>
     <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-    <label for="L_Name">Nombre, Tel o Correo</label>
+
+    <label for="L_Name">
+            {% if current_user.idioma == 'es' %}
+            Nombre, Tel o Correo
+            {% elif current_user.idioma == 'pt' %}
+            Nome, E-mail ou Telefone
+            {% elif current_user.idioma == 'jp' %}
+            名前、メール、または電話
+            {% elif current_user.idioma == 'co' %}
+            이름, 이메일 또는 전화번호
+            {% elif current_user.idioma == 'ch' %}
+            姓名，电子邮件或电话
+            {% else %}
+            Name, Email, or Phone
+            {% endif %}
+    </label>
     <input type="text" placeholder="Jhon 12343" name="nombre_login" maxlength="100" minlength="4" required>
-    
-    <label for="L_Password">Contraseña</label>
+
+    <label for="L_Password">
+        {% if current_user.idioma == 'es' %}
+        Contraseña: 
+        {% elif current_user.idioma == 'pt' %}
+        Senha
+        {% elif current_user.idioma == 'jp' %}
+        パスワード
+        {% elif current_user.idioma == 'co' %}
+        비밀번호
+        {% elif current_user.idioma == 'ch' %}
+        密码
+        {% else %}
+        Password
+        {% endif %}
+    </label>
     <input type="password" minlength="8" maxlength="100" name="contraseña_login" required>
 
-    <div><input type="checkbox" required><p>Al hacer click, aceptas nuestras cookies y uso de datos.</p></div>
+    <div>
+        <input type="checkbox" required>
+        <p>
+        {% if current_user.idioma == 'es' %}
+        Al hacer click, aceptas nuestras cookies y uso de datos.
+        {% elif current_user.idioma == 'pt' %}
+        Ao clicar, você aceita nossos cookies e uso de dados.
+        {% elif current_user.idioma == 'jp' %}
+        クリックすると、当社のクッキーとデータ使用に同意するものとします。
+        {% elif current_user.idioma == 'co' %}
+        클릭하면 쿠키 및 데이터 사용에 동의하는 것으로 간주됩니다. 
+        {% elif current_user.idioma == 'ch' %}
+        点击即表示您同意我们的 cookie 和数据使用。
+        {% else %}
+        By clicking, you agree to our cookies and data usage.
+        {% endif %}
+        </p>
+    </div>
 
-    <button type="submit">Iniciar Sesión</button>
+    <button type="submit">
+        {% if current_user.idioma == 'es' %}
+        Iniciar Sesión
+        {% elif current_user.idioma == 'pt' %}
+        Iniciar sessão
+        {% elif current_user.idioma == 'jp' %}
+        Roguin suru
+        {% elif current_user.idioma == 'co' %}
+        Logeuin
+        {% elif current_user.idioma == 'ch' %}
+        Dēnglù
+        {% else %}
+        Sign In
+        {% endif %}
+    </button>
+
+    <!-- Botones de radio -->
+    <div>
+        <input type="radio" id="radioOption1_Login" name="radioOptions_Login" value="option1" checked>
+        
+
+        <input type="radio" id="radioOption2_Login" name="radioOptions_Login" value="option2">
+        
+    </div>
 </form>
 
+<!-- Segundo formulario - Crear Cuenta -->
 <form id="SignUp" action="/signup_method" method="POST">
-
-    <h2>Crear Cuenta</h2>
+    <h2>
+        {% if current_user.idioma == 'es' %}
+        Crear Cuenta
+        {% elif current_user.idioma == 'pt' %}
+        Criar Conta
+        {% elif current_user.idioma == 'jp' %}
+        アカウントを作成する
+        {% elif current_user.idioma == 'co' %}
+        계정 만들기
+        {% elif current_user.idioma == 'ch' %}
+        创建账户
+        {% else %}
+        Create Account
+        {% endif %}
+    </h2>
     <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
 
-    <label for="R_Name">Nombre</label>
+    <label for="R_Name">
+        {% if current_user.idioma == 'es' %}
+        Nombre
+        {% elif current_user.idioma == 'pt' %}
+        Nome
+        {% elif current_user.idioma == 'jp' %}
+        名前
+        {% elif current_user.idioma == 'co' %}
+        이름
+        {% elif current_user.idioma == 'ch' %}
+        名字
+        {% else %}
+        Name
+        {% endif %}
+
+    </label>
     <input type="text" placeholder="Ryu" name="nombre_registro" maxlength="19" minlength="1" required>
-    
-    <label for="R_Alias">Apellido / Alias</label>
+
+    <label for="R_Alias">
+        {% if current_user.idioma == 'es' %}
+        Apellido/Alias
+        {% elif current_user.idioma == 'pt' %}
+        Sobrenome/Apelido
+        {% elif current_user.idioma == 'jp' %}
+         姓/エイリアス
+        {% elif current_user.idioma == 'co' %}
+        성/별명
+        {% elif current_user.idioma == 'ch' %}
+        姓/昵称
+        {% else %}
+        Last Name/Alias
+        {% endif %}
+    </label>
     <input type="text" placeholder="Osaka" name="alias_registro" maxlength="19" minlength="1" required>
-    
-    <label for="R_Password">Contraseña</label>
+
+    <label for="R_Password">
+        {% if current_user.idioma == 'es' %}
+            Contraseña
+        {% elif current_user.idioma == 'pt' %}
+            Senha
+        {% elif current_user.idioma == 'jp' %}
+            パスワード
+        {% elif current_user.idioma == 'co' %}
+            비밀번호
+        {% elif current_user.idioma == 'ch' %}
+            密码
+        {% else %}
+            Password
+        {% endif %}
+
+    </label>
     <input type="password" minlength="8" maxlength="100" name="contraseña_registro" required>
 
-    <label for="R_Password">Repetir</label>
+    <label for="R_Password">
+        {% if current_user.idioma == 'es' %}
+            Repetir Contraseña
+        {% elif current_user.idioma == 'pt' %}
+            Repetir Senha
+        {% elif current_user.idioma == 'jp' %}
+            パスワードを再入力する
+        {% elif current_user.idioma == 'co' %}
+            비밀번호 재입력
+        {% elif current_user.idioma == 'ch' %}
+            重复密码
+        {% else %}
+            Repeat Password
+        {% endif %}
+
+    </label>
     <input type="password" minlength="8" maxlength="100" name="contraseña_verificación" required>
 
-    <div><input type="checkbox" required><p>Al hacer click, aceptas nuestras cookies y uso de datos.</p></div>
+    <div>
+        <input type="checkbox" required>
+        <p>
+            {% if current_user.idioma == 'es' %}
+            Al hacer click, aceptas nuestras cookies y uso de datos.
+            {% elif current_user.idioma == 'pt' %}
+            Ao clicar, você aceita nossos cookies e uso de dados.
+            {% elif current_user.idioma == 'jp' %}
+            クリックすると、当社のクッキーとデータ使用に同意するものとします。
+            {% elif current_user.idioma == 'co' %}
+            클릭하면 쿠키 및 데이터 사용에 동의하는 것으로 간주됩니다. 
+            {% elif current_user.idioma == 'ch' %}
+            点击即表示您同意我们的 cookie 和数据使用。
+            {% else %}
+            By clicking, you agree to our cookies and data usage.
+            {% endif %}
+        </p>
+    </div>
 
-    <button type="submit">Crear Cuenta</button>
+    <button type="submit">
+        {% if current_user.idioma == 'es' %}
+            Crear Cuenta    
+        {% elif current_user.idioma == 'pt' %}
+            Criar Conta
+        {% elif current_user.idioma == 'jp' %}
+            Akounto
+        {% elif current_user.idioma == 'co' %}
+            계정 만들기
+        {% elif current_user.idioma == 'ch' %}
+            创建账户
+        {% else %}
+            Create Account
+        {% endif %}
+
+    </button>
+
+    <!-- Botones de radio -->
+    <div>
+        <input type="radio" id="radioOption1_SignUp" name="radioOptions_SignUp" value="option1">
+        
+        <input type="radio" id="radioOption2_SignUp" name="radioOptions_SignUp" value="option2">
+        
+    </div>
 </form>
-</div>
 
 <script src="{{ url_for('static', filename='JS/Login.js') }}" defer></script>
 {% endblock %}

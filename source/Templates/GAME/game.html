@@ -13,26 +13,7 @@
 
 {% block body %}
 
-    {% with messages = get_flashed_messages() %}
 
-    {% if messages %}
-    {% for message in messages %}
-    <dialog id="dialog" >
-        <h2>{{ message[0]}}</h2>
-        <p>{{ message[1]}} </p>
-    </dialog>
-
-    <script>
-        document.getElementById('dialog').showModal()
-        setTimeout( () => {
-            document.getElementById('dialog').close()
-        }, 7000)
-    </script>
-    {% endfor %}
-
-    {% endif %}
-
-    {% endwith %}
 
 
 

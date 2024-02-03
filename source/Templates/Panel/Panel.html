@@ -4,8 +4,24 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 {% endblock %}
-{% block title %}Panel - {{ current_user.ID }}{% endblock %}
+{% block title %}
+{% if current_user.idioma == 'es' %}
+Panel
+{% elif current_user.idioma == 'pt' %}
+Painel
+{% elif current_user.idioma == 'jp' %}
+Paneru
+{% elif current_user.idioma == 'co' %}
+Paenel
+{% elif current_user.idioma == 'ch' %}
+Miànbǎn
+{% else %}
+Panel
+{% endif %}
+
+- {{ current_user.ID }}{% endblock %}
 
 {% block customCSS %}
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/Panel.css')}}">
@@ -13,161 +29,886 @@
 
 {% block body %}
 
-    <header>
-        <h1 id="h1"></h1>
-            {% block titleh1 %}
-            <script>
-                const h1 = document.getElementById('h1');
-                var text = '{{current_user.Nombre}} {{current_user.Apellido}}';
-                let i = 0;
-
-                var intervalId = setInterval(function() {
-                    h1.textContent += text[i];
-                    i++;
-
-                    if (i === text.length) {
-                        clearInterval(intervalId);
-                    }
-                }, 50);
-            </script>
-            {% endblock %}
-    </header>
-
-    
-    <div id="control_panel">
-        <button id="stop_panel_song">X</button>
-    </div>
-
-    <audio loop volume="0.7" id="LoginSong" style="display:none" src="{{url_for('static', filename='Audio/LogIn.mp3')}}" type="audio/mp3"></audio>
-
-    {% with messages = get_flashed_messages() %}
-
-    {% if messages %}
-    {% for message in messages %}
-    <dialog id="dialog" >
-        <h2>{{ message[0]}}</h2>
-        <p>{{ message[1]}} </p>
-        <button id="close_dialog">¡Ok!</button>
-    </dialog>
-
-    <script>
-        var audioElement = document.getElementById('LoginSong');
-        var playing = false
-        var repro = {{ repro|tojson|safe }};
-        if (repro) {Repro()}
-        function Repro() {
-            if (audioElement.canPlayType) {
-                audioElement.play();
-                playing = true
-            } else {
-                console.log('Error, el navegador no admite reproducción de audio.');
-            }
-        }
-        document.getElementById('stop_panel_song').addEventListener('click', () => {
-            if (playing) {
-                playing = false
-                audioElement.pause()
-            } else {
-                playing = true
-                audioElement.play()
-            }
-        })
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('dialog').showModal()
-            document.getElementById('close_dialog').addEventListener('click', () => {
-                document.getElementById('dialog').close()
-                if (!playing) {Repro()}
-            });
-        })
-        setTimeout( () => {
-            document.getElementById('dialog').close()
-            if (!playing) {Repro()}
-        }, 17000)
-    </script>
-    {% endfor %}
-
-    {% endif %}
-
-    {% endwith %}
-
-    <main>
             
-        <form action="/nuevo_personaje" method="POST" id="FormCharacter">
-            <h2>Nuevo Personaje</h2>
+        <form style="display: none" action="/nuevo_personaje" method="POST" id="FormCharacter">
+            <h2>
+                {% if current_user.idioma == 'es' %}
+                    Nuevo Personaje
+                {% elif current_user.idioma == 'pt' %}
+                    Novo Personagem
+                {% elif current_user.idioma == 'jp' %}
+                    新しいキャラクター
+                {% elif current_user.idioma == 'co' %}
+                    새로운 캐릭터
+                {% elif current_user.idioma == 'ch' %}
+                    新角色 (Xīn juésè)
+                {% else %}
+                    New Character
+                {% endif %}
+
+            </h2>
+            {% if current_user.idioma == 'es' %}
+                <input type="text" placeholder="Nombre Personaje" name="Name" minlength="3" maxlength="30">
+            {% elif current_user.idioma == 'pt' %}
+                <input type="text" placeholder="Nome do Personagem" name="Name" minlength="3" maxlength="30">
+            {% elif current_user.idioma == 'jp' %}
+                <input type="text" placeholder="キャラクター名" name="Name" minlength="3" maxlength="30">
+            {% elif current_user.idioma == 'co' %}
+                <input type="text" placeholder="캐릭터 이름" name="Name" minlength="3" maxlength="30">
+            {% elif current_user.idioma == 'ch' %}
+                <input type="text" placeholder="角色名称" name="Name" minlength="3" maxlength="30">
+            {% else %}
+                <input type="text" placeholder="Character Name" name="Name" minlength="3" maxlength="30">
+            {% endif %}
+
             <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-            <input type="text" placeholder="Name Character" name="Name" minlength="3" maxlength="30">
-            <span id="rangeSpan">Edad: <i id="numar">20</i></span>
+            <span id="rangeSpan">
+            {% if current_user.idioma == 'es' %}
+                Edad
+            {% elif current_user.idioma == 'pt' %}
+                Idade
+            {% elif current_user.idioma == 'jp' %}
+                年齢
+            {% elif current_user.idioma == 'co' %}
+                Nai
+            {% elif current_user.idioma == 'ch' %}
+                年龄
+            {% else %}
+                Age
+            {% endif %}
+            
+            <i id="numar">20</i></span>
             <input type="range" value="20" min="10" max="50" id="range" name="age">
             <hr>
             <select name="gender" id="gender">
-                <option value="Male" selected>Hombre</option>
-                <option value="Female">Mujer</option>
+                <option value="Male" selected>
+                    {% if current_user.idioma == 'es' %}
+                        Hombre
+                    {% elif current_user.idioma == 'pt' %}
+                        Homem
+                    {% elif current_user.idioma == 'jp' %}
+                        Dansei
+                    {% elif current_user.idioma == 'co' %}
+                        Namseong
+                    {% elif current_user.idioma == 'ch' %}
+                        Nánxìng
+                    {% else %}
+                        Male
+                    {% endif %}
+
+                </option>
+                <option value="Female">
+                    {% if current_user.idioma == 'es' %}
+                        Mujer
+                    {% elif current_user.idioma == 'pt' %}
+                        Mulher
+                    {% elif current_user.idioma == 'jp' %}
+                        Josei
+                    {% elif current_user.idioma == 'co' %}
+                        Yeoseong
+                    {% elif current_user.idioma == 'ch' %}
+                        Nǚxìng
+                    {% else %}
+                        Female
+                    {% endif %}
+                </option>
             </select>
 
             <select name="os" id="os">
-                <option value="Heterosexual" selected>Heterosexual</option>
-                <option value="Homosexual">Homosexual</option>
-                <option value="Bisexual">Bisexual</option>
+                {% if current_user.idioma == 'es' %}
+                    <option value="Heterosexual" selected>Heterosexual</option>
+                    <option value="Homosexual">Homosexual</option>
+                    <option value="Bisexual">Bisexual</option>
+                {% elif current_user.idioma == 'pt' %}
+                    <option value="Heterosexual" selected>Heterossexual</option>
+                    <option value="Homosexual">Homossexual</option>
+                    <option value="Bisexual">Bissexual</option>
+                {% elif current_user.idioma == 'jp' %}
+                    <option value="Heterosexual" selected>異性愛者</option>
+                    <option value="Homosexual">同性愛者</option>
+                    <option value="Bisexual">両性愛者</option>
+                {% elif current_user.idioma == 'co' %}
+                    <option value="Heterosexual" selected>이성애자</option>
+                    <option value="Homosexual">동성애자</option>
+                    <option value="Bisexual">양성애자</option>
+                {% elif current_user.idioma == 'ch' %}
+                    <option value="Heterosexual" selected>异性恋</option>
+                    <option value="Homosexual">同性恋</option>
+                    <option value="Bisexual">双性恋</option>
+                {% else %}
+                    <option value="Heterosexual" selected>Heterosexual</option>
+                    <option value="Homosexual">Homosexual</option>
+                    <option value="Bisexual">Bisexual</option>
+                {% endif %}
+
             </select>
 
             <select name="class" id="class">
-                <option value="warrior" selected>Guerrero</option>
-                <option value="Assassing">Asesino</option>
-                <option value="Tank">Tanque</option>
+                {% if current_user.idioma == 'es' %}
+                    <option value="warrior" selected>Guerrero</option>
+                    <option value="Assassing">Asesino</option>
+                    <option value="Tank">Tanque</option>
+                {% elif current_user.idioma == 'pt' %}
+                    <option value="warrior" selected>Guerreiro</option>
+                    <option value="Assassing">Assassino</option>
+                    <option value="Tank">Tanque</option>
+                {% elif current_user.idioma == 'jp' %}
+                    <option value="warrior" selected>戦士 (Senshi)</option>
+                    <option value="Assassing">暗殺者 (Ansatsusha)</option>
+                    <option value="Tank">タンク (Tanku)</option>
+                {% elif current_user.idioma == 'co' %}
+                    <option value="warrior" selected>전사 (Jeonsa)</option>
+                    <option value="Assassing">암살자 (Amsalja)</option>
+                    <option value="Tank">탱크 (Taengkeu)</option>
+                {% elif current_user.idioma == 'ch' %}
+                    <option value="warrior" selected>战士 (Zhànshì)</option>
+                    <option value="Assassing">刺客 (Cìkè)</option>
+                    <option value="Tank">坦克 (Tǎnkè)</option>
+                {% else %}
+                    <option value="warrior" selected>Warrior</option>
+                    <option value="Assassing">Assassin</option>
+                    <option value="Tank">Tank</option>
+                {% endif %}
             </select>
 
             <hr>
 
-            <button type="submit">Crear</button><button id="cancel" type="button">Cancelar</button>
-
+            {% if current_user.idioma == 'es' %}
+                <button type="submit">Crear</button><button id="cancel" type="button">Cancelar</button>
+            {% elif current_user.idioma == 'pt' %}
+                <button type="submit">Criar</button><button id="cancel" type="button">Cancelar</button>
+            {% elif current_user.idioma == 'jp' %}
+                <button type="submit">作成する</button><button id="cancel" type="button">Kyanseru</button>
+            {% elif current_user.idioma == 'co' %}
+                <button type="submit">만들기</button><button id="cancel" type="button">Chwiso</button>
+            {% elif current_user.idioma == 'ch' %}
+                <button type="submit">创建</button><button id="cancel" type="button">Qǔxiāo</button>
+            {% else %}
+                <button type="submit">Create</button><button id="cancel" type="button">Cancel</button>
+            {% endif %}
         </form>
 
-        
-        <section id="sectionCharacters">
-            <h2>Elije Un Personaje</h2>
-            {% if current_user.Instancia_Personajes %}
-                    {% for key, Instance in current_user.Instancia_Personajes.items() %}
-                    <article>
-                        <div>
-                            <img src="{{  url_for('static', filename='Assets/player.png') }}">
-                            <p style="text-align: center">{{ Instance.Nombre }}</p>
-                            <p>Age: {{ Instance.Edad }} years</p>
-                            <p>Sex. Inf: {{ Instance.Genero}} - {{ Instance.Orientacion }}</p>
-                            <p>Class: {{ Instance.Clase }}</p>
-                        </div>
+<header>
+    <button id="abrir_menu" data-text="Menu"><span class="span_button"></span></button>
+    <h1 data-text = '' id="h1_panel"></h1>
+    {% if current_user.photo %} <img id="profile_menu_open" src="{{current_user.photo}}" alt="">
+    {% else %} <img id="profile_menu_open" src="https://img.icons8.com/material-sharp/24/000000/user.png" alt="user"/>
+    {% endif %}
 
-                        <p class="pcont"><span>Gold: </span> <span>{{ Instance.Oro}} G</span></p>
-                        <p class="pcont"><span>Level: </span> <span>{{ Instance.Nivel}}</span></p>
-                        <p class="pcont"><span>Weapon: </span><span>{% if Instance.Equippement %} {{Instance.Equippement['Hand1'][0]}} {% else %} Ninguna {% endif %}</span></p>
-                        <p class="pcont"><span>Location: </span> <span>Undefined</span></p>
+    {% block titleh1 %}
+    <script>
+        const h1 = document.getElementById('h1_panel');
+        var text = '{{current_user.Nombre}} {{current_user.Apellido}}';
+        let i = 0;
 
-                        <div class='p_control'>
-                            <a href="{{ url_for('borrar_personaje', to=Instance.ID) }}" title="Eliminar"><img src="{{ url_for('static', filename='Assets/DeleteCont.png') }}"></a>
-                            <a href="{{ url_for('usar_personaje', to=Instance.ID)}}">✔️</a>
-                        </div>
-                    </article>
-                        {% if current_user.Instancia_Personajes|length == 1 %}
-                            <article id="notChars">
-                                <p>Ranura vacía.</p>
-                                <button type="button" id="newCharacter">+</button>
-                            </article>
-                        {% endif %}
-                    {% endfor %}
+        var intervalId = setInterval(function() {
+            h1.dataset.text += text[i]
+            h1.textContent += text[i];
+            i++;
+
+            if (i === text.length) {
+                clearInterval(intervalId);
+            }
+        }, 50);
+    </script>
+    {% endblock %}
+</header>
+
+
+
+
+<section id="profile_menu">
+    <article class="header"><span>PROFILE</span><button id="exit_profile_menu">X</button></article>
+    <article class="center">
+        {% if current_user.photo %} <img id="user_image_profile" src="{{current_user.photo}}" alt="">
+        {% else %} <img id="user_image_profile" src="https://img.icons8.com/material-sharp/24/000000/user.png" alt="user"/>
+        {% endif %}
+    </article>
+    <article class="name center">
+        <span>{{ current_user.Nombre }} {{ current_user.Apellido}}</span>
+        <i class="change" id="change_name">
+            {% if current_user.idioma == 'es' %}
+                Cambiar
+            {% elif current_user.idioma == 'pt' %}
+                Mudar
+            {% elif current_user.idioma == 'jp' %}
+                変更
+            {% elif current_user.idioma == 'co' %}
+                변경
+            {% elif current_user.idioma == 'ch' %}
+                更改
             {% else %}
-                <article id="notChars">
-                    <p>Ranura vacía.</p>
-                    <button type="button" id="newCharacter">+</button>
-                </article>
-
-                <article id="notChars">
-                    <p>Ranura vacía</p>
-                    <button type="button" id="newCharacter">+</button>
-                </article>
+                Change
             {% endif %}
-    </section>
+        </i>
+    </article>
 
-    </main>
+    <article class="info_personal">
+        <ul>
+            {% if current_user.idioma == 'es' %}
+                <li><span>Correo Electrónico:</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} Ninguno. {% endif %}</span><i class="change" id="change_mail">Cambiar</i></li>
+                <li><span>Teléfono:</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} Ninguno. {% endif %}</span><i class="change" id="change_tel">Cambiar</i></li>
+                <li><span>País:</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} No proporcionado. {% endif %}</span><i class="change" id="change_country">Cambiar</i></li>
+                <li><span>Género:</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} No definido. {% endif %}</span><i class="change" id="change_gender">Cambiar</i></li>
+                <li><span>Orientación:</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} No definida. {% endif %}</span><i class="change" id="change_orientation">Cambiar</i></li>
+                <li><span>Cumpleaños:</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} No proporcionado. {% endif %}</span><i class="change" id="change_birthday">Cambiar</i></li>
+            {% elif current_user.idioma == 'pt' %}
+                <li><span>E-mail:</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} Nenhum. {% endif %}</span><i class="change" id="change_mail">Mudar</i></li>
+                <li><span>Telefone:</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} Nenhum. {% endif %}</span><i class="change" id="change_tel">Mudar</i></li>
+                <li><span>País:</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} Não fornecido. {% endif %}</span><i class="change" id="change_country">Mudar</i></li>
+                <li><span>Gênero:</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} Não definido. {% endif %}</span><i class="change" id="change_gender">Mudar</i></li>
+                <li><span>Orientação:</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} Não definida. {% endif %}</span><i class="change" id="change_orientation">Mudar</i></li>
+                <li><span>Aniversário:</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} Não fornecido. {% endif %}</span><i class="change" id="change_birthday">Mudar</i></li>
+            {% elif current_user.idioma == 'jp' %}
+                <li><span>電子メール：</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} なし。 {% endif %}</span><i class="change" id="change_mail">変更</i></li>
+                <li><span>電話：</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} なし。 {% endif %}</span><i class="change" id="change_tel">変更</i></li>
+                <li><span>国：</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} 提供されていません。 {% endif %}</span><i class="change" id="change_country">変更</i></li>
+                <li><span>性別：</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} 未定義。 {% endif %}</span><i class="change" id="change_gender">変更</i></li>
+                <li><span>性的指向：</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} 未定義。 {% endif %}</span><i class="change" id="change_orientation">変更</i></li>
+                <li><span>誕生日：</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} 提供されていません。 {% endif %}</span><i class="change" id="change_birthday">変更</i></li>
+            {% elif current_user.idioma == 'co' %}
+                <li><span>이메일:</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} 없음. {% endif %}</span><i class="change" id="change_mail">변경</i></li>
+                <li><span>전화번호:</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} 없음. {% endif %}</span><i class="change" id="change_tel">변경</i></li>
+                <li><span>국가:</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} 제공되지 않음. {% endif %}</span><i class="change" id="change_country">변경</i></li>
+                <li><span>성별:</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} 미정의. {% endif %}</span><i class="change" id="change_gender">변경</i></li>
+                <li><span>성적 지향:</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} 미정의. {% endif %}</span><i class="change" id="change_orientation">변경</i></li>
+                <li><span>생년월일:</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} 제공되지 않음. {% endif %}</span><i class="change" id="change_birthday">변경</i></li>     
+            {% elif current_user.idioma == 'ch' %}
+                <li><span>电子邮件：</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} 无。 {% endif %}</span><i class="change" id="change_mail">更改</i></li>
+                <li><span>电话：</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} 无。 {% endif %}</span><i class="change" id="change_tel">更改</i></li>
+                <li><span>国家：</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} 未提供。 {% endif %}</span><i class="change" id="change_country">更改</i></li>
+                <li><span>性别：</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} 未定义。 {% endif %}</span><i class="change" id="change_gender">更改</i></li>
+                <li><span>性取向：</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} 未定义。 {% endif %}</span><i class="change" id="change_orientation">更改</i></li>
+                <li><span>生日：</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} 未提供。 {% endif %}</span><i class="change" id="change_birthday">更改</i></li>
+            {% else %}
+                <li><span>Email:</span> <span>{% if current_user.correo %} {{ current_user.correo}} {% else %} None. {% endif %}</span><i class="change" id="change_mail">Change</i></li>
+                <li><span>Phone:</span> <span>{% if current_user.telefono %} {{ current_user.telefono}} {% else %} None. {% endif %}</span><i class="change" id="change_tel">Change</i></li>
+                <li><span>Country:</span> <span>{% if current_user.otros[4] %} {{ current_user.otros[4]}} {% else %} Not provided. {% endif %}</span><i class="change" id="change_country">Change</i></li>
+                <li><span>Gender:</span> <span>{% if current_user.otros[2] %} {{ current_user.otros[2]}} {% else %} Undefined. {% endif %}</span><i class="change" id="change_gender">Change</i></li>
+                <li><span>Orientation:</span> <span>{% if current_user.otros[3] %} {{ current_user.otros[3]}} {% else %} Undefined. {% endif %}</span><i class="change" id="change_orientation">Change</i></li>
+                <li><span>Birthday:</span> <span>{% if current_user.otros[0] %} {{ current_user.otros[0]}} {% else %} Not provided. {% endif %}</span><i class="change" id="change_birthday">Change</i></li>
+            {% endif %}
 
-    <a id="LogOutA" href="{{ url_for('logout')}}">Log Out</a>
-    <script src="{{ url_for('static', filename='JS/Panel.js')}}" defer></script>
+        </ul>          
+    </article>
+    <article class="console" id="console">
+    </article>
+    <article class="center">
+        {% if current_user.idioma == 'es' %}
+            <p>Más próximamente.</p>
+        {% elif current_user.idioma == 'pt' %}
+            <p>Em breve.</p>
+        {% elif current_user.idioma == 'jp' %}
+            <p>もっと近日中に。</p>
+        {% elif current_user.idioma == 'co' %}
+            <p>더 곧 나올 예정입니다.</p>
+        {% elif current_user.idioma == 'ch' %}
+            <p>更多内容即将推出。</p>
+        {% else %}
+            <p>More coming soon.</p>
+        {% endif %}
+    </article>
+</section>
+
+<div id="menu_desplegable_lateral">
+    <div class="exit_menu_desplegable_lateral"><span>Menu</span><button id="cerrar_menu">X</button></div>
+
+    <div class="news">
+        {% if current_user.idioma == 'es' %}
+            <p>Aún no hay noticias para ti. Cuando haya nuevas, aparecerán aquí.</p>
+        {% elif current_user.idioma == 'pt' %}
+            <p>Ainda não há notícias para você. Quando houver novidades, elas aparecerão aqui.</p>
+        {% elif current_user.idioma == 'jp' %}
+            <p>あなたのための新しいお知らせはまだありません。新しい情報があると、ここに表示されます。</p>
+        {% elif current_user.idioma == 'co' %}
+            <p>아직 당신을 위한 소식이 없습니다. 새로운 소식이 있을 때 여기에 표시됩니다.</p>
+        {% elif current_user.idioma == 'ch' %}
+            <p>目前还没有针对你的消息。当有新消息时，它们将出现在这里。</p>
+        {% else %}
+            <p>No news for you yet. When there are updates, they will appear here.</p>
+        {% endif %}
+
+    </div>
+    
+    <div class="tools_iteractive_block">
+        {% if current_user.idioma == 'es' %}
+            <button id="abrir_menu_ajustes">Ajustes</button>
+            <a href="{{ url_for('logout')}}">Cerrar Sesión</a>
+        {% elif current_user.idioma == 'pt' %}
+            <button id="abrir_menu_ajustes">Configurações</button>
+            <a href="{{ url_for('logout')}}">Sair</a>
+        {% elif current_user.idioma == 'jp' %}
+            <button id="abrir_menu_ajustes">設定</button>
+            <a href="{{ url_for('logout')}}">ログアウト</a>
+        {% elif current_user.idioma == 'co' %}
+            <button id="abrir_menu_ajustes">설정</button>
+            <a href="{{ url_for('logout')}}">로그아웃</a>
+        {% elif current_user.idioma == 'ch' %}
+            <button id="abrir_menu_ajustes">设置</button>
+            <a href="{{ url_for('logout')}}">登出</a>
+        {% else %}
+            <button id="abrir_menu_ajustes">Settings</button>
+            <a href="{{ url_for('logout')}}">Logout</a>
+        {% endif %}
+    </div>
+
+    <div class="footer"><p>All rights Reserved</p></div>
+</div>
+
+<section id="menu_ajustes_prin">
+
+    <article class="sep_article"><hr>Interfaz<hr></article>
+    <article>
+        {% if current_user.idioma == 'es' %}
+            <label for="languagr">Idioma: </label>
+        {% elif current_user.idioma == 'pt' %}
+            <label for="languagr">Idioma: </label>
+        {% elif current_user.idioma == 'jp' %}
+            <label for="languagr">言語: </label>
+        {% elif current_user.idioma == 'co' %}
+            <label for="languagr">언어: </label>
+        {% elif current_user.idioma == 'ch' %}
+            <label for="languagr">语言: </label>
+        {% else %}
+            <label for="languagr">Language: </label>
+        {% endif %}
+        <select id="lang">
+            {% if current_user.idioma == 'es' %}
+                <option value="es" selected>Español</option>
+                <option value="en">Inglés</option>
+                <option value="jp">Japonés</option>
+                <option value="ch">Chino</option>
+                <option value="pt">Portugués</option>
+                <option value="co">Coreano</option>
+            {% elif current_user.idioma == 'pt' %}
+                <option value="es">Espanhol</option>
+                <option value="en">Inglês</option>
+                <option value="jp">Japonês</option>
+                <option value="ch">Chinês</option>
+                <option value="pt" selected>Português</option>
+                <option value="co">Coreano</option>
+            {% elif current_user.idioma == 'jp' %}
+                <option value="es">スペイン語 (Supeingo)</option>
+                <option value="en">英語 (Eigo)</option>
+                <option value="jp" selected>日本語 (Nihongo)</option>
+                <option value="ch">中国語 (Chūgokugo)</option>
+                <option value="pt">ポルトガル語 (Porutogarugo)</option>
+                <option value="co">韓国語 (Kankokugo)</option>
+            {% elif current_user.idioma == 'co' %}
+                <option value="es">Español</option>
+                <option value="en">Inglés</option>
+                <option value="jp">Japonés</option>
+                <option value="ch">Chino</option>
+                <option value="pt">Portugués</option>
+                <option value="co" selected>Coreano</option>
+            {% elif current_user.idioma == 'ch' %}
+                <option value="es">西班牙语 (Xībānyá yǔ)</option>
+                <option value="en">英语 (Yīngyǔ)</option>
+                <option value="jp">日语 (Rìyǔ)</option>
+                <option value="ch" selected>中文 (Zhōngwén)</option>
+                <option value="pt">葡萄牙语 (Pútáoyá yǔ)</option>
+                <option value="co">韩语 (Hányǔ)</option>
+            {% else %}
+                <option value="es">Spanish</option>
+                <option value="en" selected>English</option>
+                <option value="jp">Japanese</option>
+                <option value="ch">Chinese</option>
+                <option value="pt">Portuguese</option>
+                <option value="co">Korean</option>
+            {% endif %}
+
+        </select>
+    </article>
+
+    <article>
+        {% if current_user.idioma == 'es' %}
+            <label for="theme_color">Tema: </label>
+        {% elif current_user.idioma == 'pt' %}
+            <label for="theme_color">Tema: </label>
+        {% elif current_user.idioma == 'jp' %}
+            <label for="theme_color">テーマ: </label>
+        {% elif current_user.idioma == 'co' %}
+            <label for="theme_color">테마: </label>
+        {% elif current_user.idioma == 'ch' %}
+            <label for="theme_color">主题: </label>
+        {% else %}
+            <label for="theme_color">Theme: </label>
+        {% endif %}
+        <select id="theme_color">
+            {% if current_user.idioma == 'es' %}
+                <option value="dark">Oscuro</option>
+                <option value="light">Claro</option>
+                <option value="pink_sky">Cielo Rosa</option>
+                <option value="black_and_white">Blanco y Negro</option>
+                <option value="white_and_black">Blanco sobre negro</option>
+                <option value="default">Predeterminado</option>
+            {% elif current_user.idioma == 'pt' %}
+                <option value="dark">Escuro</option>
+                <option value="light">Claro</option>
+                <option value="pink_sky">Céu Rosa</option>
+                <option value="black_and_white">Preto e Branco</option>
+                <option value="white_and_black">Branco sobre Preto</option>
+                <option value="default">Predeterminado</option>
+            {% elif current_user.idioma == 'jp' %}
+                <option value="dark">ダーク</option>
+                <option value="light">ライト</option>
+                <option value="pink_sky">ピンクの空</option>
+                <option value="black_and_white">白黒</option>
+                <option value="white_and_black">白黒反転</option>
+                <option value="default">デフォルト</option>
+            {% elif current_user.idioma == 'co' %}
+                <option value="dark">어두운</option>
+                <option value="light">밝은</option>
+                <option value="pink_sky">분홍색 하늘</option>
+                <option value="black_and_white">흑백</option>
+                <option value="white_and_black">흰색 흑백</option>
+                <option value="default">기본</option>
+            {% elif current_user.idioma == 'ch' %}
+                <option value="dark">暗</option>
+                <option value="light">亮</option>
+                <option value="pink_sky">粉红天空</option>
+                <option value="black_and_white">黑白</option>
+                <option value="white_and_black">白色背景黑字</option>
+                <option value="default">默认</option>
+            {% else %}
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="pink_sky">Pink Sky</option>
+                <option value="black_and_white">Black and White</option>
+                <option value="white_and_black">White on Black</option>
+                <option value="default">Default</option>
+            {% endif %}
+        </select>
+    </article>
+
+    <article class="sep_article">
+        <hr>
+        {% if current_user.idioma == 'es' %}
+            Sonido
+        {% elif current_user.idioma == 'pt' %}
+            Som
+        {% elif current_user.idioma == 'jp' %}
+            音声
+        {% elif current_user.idioma == 'co' %}
+            소리
+        {% elif current_user.idioma == 'ch' %}
+            声音
+        {% else %}
+            Sound
+        {% endif %}                                
+        <hr>
+    </article>
+
+    <article>
+        {% if current_user.idioma == 'es' %}
+            <label for="login_song_volume">Volumen de la Música del Panel: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">Detener</button>
+        {% elif current_user.idioma == 'pt' %}
+            <label for="login_song_volume">Volume da Música do Painel: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">Parar</button>
+        {% elif current_user.idioma == 'jp' %}
+            <label for="login_song_volume">パネル音楽の音量: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">停止</button>
+        {% elif current_user.idioma == 'co' %}
+            <label for="login_song_volume">패널 음악 볼륨: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">정지</button>
+        {% elif current_user.idioma == 'ch' %}
+            <label for="login_song_volume">面板音乐音量: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">停止</button>
+        {% else %}
+            <label for="login_song_volume">Panel Music Volume: </label>
+            <input type="range" id="login_song_volume" max="100" min="0" value="100"> <button id="stop/play">Stop</button>
+        {% endif %}
+
+        <select id="login_song_files">
+            <option value="Default">Default</option>
+            <option value="Pow">Pow</option>
+        </select>
+    </article>
+
+    <article class="sep_article">
+        <hr>
+        {% if current_user.idioma == 'es' %}
+            Privacidad
+        {% elif current_user.idioma == 'pt' %}
+            Privacidade
+        {% elif current_user.idioma == 'jp' %}
+            プライバシー
+        {% elif current_user.idioma == 'co' %}
+            개인 정보 보호
+        {% elif current_user.idioma == 'ch' %}
+            隐私
+        {% else %}
+            Privacy
+        {% endif %}    
+        <hr>
+    </article>
+    <article>
+        <label for="on_line_state">
+            {% if current_user.idioma == 'es' %}
+                En línea:
+            {% elif current_user.idioma == 'pt' %}
+                Online:
+            {% elif current_user.idioma == 'jp' %}
+                オンライン：
+            {% elif current_user.idioma == 'co' %}
+                온라인:
+            {% elif current_user.idioma == 'ch' %}
+                在线：
+            {% else %}
+                Online:
+            {% endif %}
+        </label>
+        <select id="on_line_state">
+            {% if current_user.idioma == 'es' %}
+                <option value="show">En Línea</option>
+                <option value="disconnect">Desconectado</option>
+                <option value="hidden">Oculto</option>
+            {% elif current_user.idioma == 'pt' %}
+                <option value="show">Online</option>
+                <option value="disconnect">Desconectado</option>
+                <option value="hidden">Oculto</option>
+            {% elif current_user.idioma == 'jp' %}
+                <option value="show">オンライン</option>
+                <option value="disconnect">オフライン</option>
+                <option value="hidden">非表示</option>
+            {% elif current_user.idioma == 'co' %}
+                <option value="show">온라인</option>
+                <option value="disconnect">오프라인</option>
+                <option value="hidden">숨김</option>
+            {% elif current_user.idioma == 'ch' %}
+                <option value="show">在线</option>
+                <option value="disconnect">离线</option>
+                <option value="hidden">隐藏</option>
+            {% else %}
+                <option value="show">Online</option>
+                <option value="disconnect">Offline</option>
+                <option value="hidden">Hidden</option>
+            {% endif %}
+
+        </select>
+    </article>
+
+    {% if current_user.idioma == 'es' %}
+        <article>
+            <label for="hidden_country">Ocultar País</label>
+            <input type="checkbox" id="hidden_country">
+        </article>
+
+        <article>
+            <label for="hidden_tel">Ocultar Teléfono</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">Ocultar Correo</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">Ocultar Perfil</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% elif current_user.idioma == 'pt' %}
+        <article>
+            <label for="hidden_country">Ocultar País</label>
+            <input  id="hidden_country" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_tel">Ocultar Telefone</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">Ocultar Correio</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">Ocultar Perfil</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% elif current_user.idioma == 'jp' %}
+        <article>
+            <label for="hidden_country">国を非表示</label>
+            <input id="hidden_country" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_tel">電話を非表示</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">メールを非表示</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">プロフィールを非表示</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% elif current_user.idioma == 'co' %}
+        <article>
+            <label for="hidden_country">국가 숨기기</label>
+            <input id="hidden_country" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_tel">전화 숨기기</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">이메일 숨기기</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">프로필 숨기기</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% elif current_user.idioma == 'ch' %}
+        <article>
+            <label for="hidden_country">隐藏国家</label>
+            <input id="hidden_country" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_tel">隐藏电话</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">隐藏邮件</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">隐藏个人资料</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% else %}
+        <article>
+            <label for="hidden_country">Hide Country</label>
+            <input id="hidden_country" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_tel">Hide Phone</label>
+            <input id="hidden_tel" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_mail">Hide Email</label>
+            <input id="hidden_mail" type="checkbox">
+        </article>
+
+        <article>
+            <label for="hidden_profile">Hide Profile</label>
+            <input id="hidden_profile" type="checkbox">
+        </article>
+    {% endif %}
+
+
+    <article class="sep_article">
+        <hr>
+            {% if current_user.idioma == 'es' %}
+                Seguridad
+            {% elif current_user.idioma == 'pt' %}
+                Segurança
+            {% elif current_user.idioma == 'jp' %}
+                セキュリティ
+            {% elif current_user.idioma == 'co' %}
+                보안
+            {% elif current_user.idioma == 'ch' %}
+                安全
+            {% else %}
+                Security
+            {% endif %}
+        <hr>
+    </article>
+
+    <article class="column">
+        <form action="">
+            {% if current_user.idioma == 'es' %}
+                <h2>Cambiar contraseña</h2>
+                <label for="old_password">Antigua contraseña</label><input type="password">
+                <label for="new_password">Nueva contraseña</label><input type="password">
+                <label for="verify_password">Repetir contraseña</label><input type="password">
+                <button type="submit">Cambiar</button>
+            {% elif current_user.idioma == 'pt' %}
+                <h2>Alterar senha</h2>
+                <label for="old_password">Senha antiga</label><input type="password">
+                <label for="new_password">Nova senha</label><input type="password">
+                <label for="verify_password">Repetir senha</label><input type="password">
+                <button type="submit">Alterar</button>
+            {% elif current_user.idioma == 'jp' %}
+                <h2>パスワードの変更</h2>
+                <label for="old_password">古いパスワード</label><input type="password">
+                <label for="new_password">新しいパスワード</label><input type="password">
+                <label for="verify_password">パスワードの再入力</label><input type="password">
+                <button type="submit">変更</button>
+            {% elif current_user.idioma == 'co' %}
+                <h2>비밀번호 변경</h2>
+                <label for="old_password">이전 비밀번호</label><input type="password">
+                <label for="new_password">새 비밀번호</label><input type="password">
+                <label for="verify_password">비밀번호 확인</label><input type="password">
+                <button type="submit">변경</button>
+            {% elif current_user.idioma == 'ch' %}
+                <h2>更改密码</h2>
+                <label for="old_password">旧密码</label><input type="password">
+                <label for="new_password">新密码</label><input type="password">
+                <label for="verify_password">重复密码</label><input type="password">
+                <button type="submit">更改</button>
+            {% else %}
+                <h2>Change Password</h2>
+                <label for="old_password">Old Password</label><input type="password">
+                <label for="new_password">New Password</label><input type="password">
+                <label for="verify_password">Repeat Password</label><input type="password">
+                <button type="submit">Change</button>
+            {% endif %}
+        </form>
+
+        <div class="min_sep"><hr>O<hr></div>
+
+        <form action="/eliminar_cuenta" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+            <button type="submit">
+                {% if current_user.idioma == 'es' %}
+                    Eliminar cuenta
+                {% elif current_user.idioma == 'pt' %}
+                    Excluir conta
+                {% elif current_user.idioma == 'jp' %}
+                    アカウントを削除する
+                {% elif current_user.idioma == 'co' %}
+                    계정 삭제
+                {% elif current_user.idioma == 'ch' %}
+                    删除账户
+                {% else %}
+                    Delete Account
+                {% endif %}
+            </button>
+        </form>
+    </article>
+
+    {% if current_user.idioma == 'es' %}
+        <article class="sep_article"><hr>Próximamente<hr></article>
+        <p>Más Próximamente</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% elif current_user.idioma == 'pt' %}
+        <article class="sep_article"><hr>Em Breve<hr></article>
+        <p>Mais Em Breve</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% elif current_user.idioma == 'jp' %}
+        <article class="sep_article"><hr>近日公開<hr></article>
+        <p>もっと近日公開</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% elif current_user.idioma == 'co' %}
+        <article class="sep_article"><hr>곧 출시<hr></article>
+        <p>더 곧 출시</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% elif current_user.idioma == 'ch' %}
+        <article class="sep_article"><hr>即将推出<hr></article>
+        <p>更多即将推出</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% else %}
+        <article class="sep_article"><hr>Coming Soon<hr></article>
+        <p>More Coming Soon</p>
+        <button type="button" id="exit_menu_ajustes">OK</button>
+    {% endif %}
+
+</section>
+
+<main>
+    {% if current_user.idioma == 'es' %}
+    <div id="empty">
+        <p>Ranura vacía</p>
+        <a href="/">+</a>
+    </div>
+    <div id="empty">
+        <p>Ranura vacía</p>
+        <a href="/">+</a>
+    </div>
+    {% elif current_user.idioma == 'pt' %}
+        <div id="empty">
+            <p>Vaga vazia</p>
+            <a href="/">+</a>
+        </div>
+        <div id="empty">
+            <p>Vaga vazia</p>
+            <a href="/">+</a>
+        </div>
+    {% elif current_user.idioma == 'jp' %}
+        <div id="empty">
+            <p>空きスロット</p>
+            <a href="/">+</a>
+        </div>
+        <div id="empty">
+            <p>空きスロット</p>
+            <a href="/">+</a>
+        </div>
+    {% elif current_user.idioma == 'co' %}
+        <div id="empty">
+            <p>빈 슬롯</p>
+            <a href="/">+</a>
+        </div>
+        <div id="empty">
+            <p>빈 슬롯</p>
+            <a href="/">+</a>
+        </div>
+    {% elif current_user.idioma == 'ch' %}
+        <div id="empty">
+            <p>空槽</p>
+            <a href="/">+</a>
+        </div>
+        <div id="empty">
+            <p>空槽</p>
+            <a href="/">+</a>
+        </div>
+    {% else %}
+        <div id="empty">
+            <p>Empty Slot</p>
+            <a href="/">+</a>
+        </div>
+        <div id="empty">
+            <p>Empty Slot</p>
+            <a href="/">+</a>
+        </div>
+    {% endif %}
+</main>
+
+<script src="{{ url_for('static', filename='JS/Panel.js') }}" defer></script>
+
+<script defer>
+
+    const theme_color = document.getElementById('theme_color')
+    function change_prefers_color_scheme(scheme_color) {
+        // Itera sobre las opciones del select
+        for (var i = 0; i < theme_color.options.length; i++) {
+            // Verifica si el valor de la opción actual coincide con el valor deseado
+            if (theme_color.options[i].value === scheme_color) {
+                // Establece el atributo "selected" en la opción encontrada
+                theme_color.options[i].selected = true;
+                // Puedes detener la iteración si solo quieres seleccionar la primera coincidencia
+                break;
+            }
+        }
+        if (scheme_color || window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', scheme_color);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        else {
+            document.documentElement.setAttribute('data-theme', scheme_color)
+        }
+    }
+    change_prefers_color_scheme("{{current_user.color_tema_preferido}}") // Inicializar por primera vez al iniciar la página.
+
+    theme_color.addEventListener('input', (e) => {
+        change_prefers_color_scheme(e.target.value)
+    })
+</script>
+
 {% endblock %}

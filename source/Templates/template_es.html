@@ -1,18 +1,63 @@
 <!DOCTYPE html>
-<html lang="es">
+{% if current_user.idioma %}
+<html lang="{{current_user.idioma}}">
+{% else %}
+<html lang="en">
+{% endif %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block CustomMetas %}
     
     {% endblock %}
-    <title>{% block title %} {% endblock %}</title>
+    <title translate="no">{% block title %} {% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/General.css') }}">
     {% block customCSS %}
     {% endblock %}
 </head>
-<body>
+<body translate="no">
+    {% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <dialog id="dialog" class="rpg-dialog">
+            <h2 class="rpg-title">{{ message[0] }}</h2>
+            <p class="rpg-text">{{ message[1]|safe }}</p>
+            <button id="close_dialog" class="rpg-button">
+                {% if current_user.idioma == 'es' %}
+                    ¡Entiendo!
+                {% elif current_user.idioma == 'pt' %}
+                    ¡Bem!
+                {% elif current_user.idioma == 'jp' %}
+                    良い!
+                {% elif current_user.idioma == 'co' %}
+                    좋아!
+                {% elif current_user.idioma == 'ch' %}
+                    好
+                {% else %}
+                    I Understand!
+                {% endif %}
+            </button>    
+        </dialog>
+        
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('dialog').showModal()
+                document.getElementById('close_dialog').addEventListener('click', () => {
+                    document.getElementById('dialog').close()
+                });
+            })
+            setTimeout( () => {
+                document.getElementById('dialog').close()
+            }, 17000)
+        </script>
+    {% endfor %}
+
+    {% endif %}
+
+    {% endwith %}
     {% block body %}
     {% endblock %}
 </body>

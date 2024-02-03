@@ -1,21 +1,32 @@
 from flask_login import UserMixin
 import random
 import asyncio
-from Herramientas import Tools
+from Herramientas.Tools import limpiar_y_convertir_a_pascal_case
 from .Items import Item
 
 from ..modelos_C_I import Modelo_C, Modelo_I
 
 class Usuario(UserMixin):
-    def __init__(self, ID, Apellido, Nombre, Registro, Estado, personajes = {}, Email = '', Telefono = ''):
+    def __init__(self, ID, Apellido, Nombre, Registro, Estado, personajes = {}, Email = '', Telefono = '', Theme_color = 'Default', Panel_song = [1.0, True, 'Default'], ONLSTT = 'show', hiddes = [False, False, False, False], others = None, idioma = 'en'):
         self.ID = ID
         self.Apellido = Apellido
         self.Nombre = Nombre
-        self.Email = Email
+        self.correo = Email
         self.Registro = Registro
-        self.Tel = Telefono
+        self.telefono = Telefono
+        self.color_tema_preferido = Theme_color
+        self.musica_del_panel = Panel_song
+        self.estado_en_linea = ONLSTT #
+        self.ocultos = hiddes # ocultar region, ocultar correo, ocultar telefono, ocultar perfil
+        self.otros = others # cumpleaños, edad, genero, orientación, región
+        self.photo = None
+
+        # Personajes
         self.current_character = None
         self.Personajes = personajes if personajes else {}
+
+        # Banderas de seguimiento
+        self.idioma = idioma
         self.Estado = Estado
         self.Eliminada = False
         self.seguimiento = False
@@ -88,7 +99,7 @@ class Personaje:
         self.Edad = Info['Edad']
         self.Nombre = Info['Nombre']
         self.Orientacion = Info['Orientacion']
-        self.Clase = Tools.Limpiar(Info['Clase'])
+        self.Clase = limpiar_y_convertir_a_pascal_case(Info['Clase'])
         self.Registro = Info['Registro']
         
         self.Oro = 0

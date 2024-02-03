@@ -15,46 +15,51 @@ html, body {
 }
 
 
-#dialog {
-    background: white;
+.rpg-dialog {
+    background-color: #0a0a0a;
+    padding: 20px;
+    border: 2px solid #8b4513;
     border-radius: 10px;
-    border: 3px black solid;
-    box-shadow: 1px 1px 5px 5px rgb(24, 23, 23);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 400px; /* Ajusta según sea necesario */
     position: absolute;
-    top: 40px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    min-height: 100px;
-    min-width: 100px;
-    max-width: 400px;
-    width: fit-content;
-    height: fit-content;
-    overflow: hidden;
+    transform: translateX(-50%) translateY(-50%);
 }
 
-#dialog h2 {
-    background: black;
-    width: 100%;
-    color: white;
-    font-size: 1.0em;
-    text-align: center;
-    padding: 7px;
+.rpg-title {
+    color: #ffd700;
+    font-size: 24px;
+    margin-bottom: 10px;
 }
 
-#dialog p {
-    color: rgb(0, 0, 0);
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: 0.9em;
-    padding: 5px;
-    font-weight: 100;
+.rpg-text {
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
-#dialog button {
-    padding: 4px 12px;
-    background: rgb(0, 0, 0);
-    display: block;
-    margin: 10px auto;
+.rpg-button {
+    background-color: #8b4513;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
     border: none;
-    color: white;
-    border-radius: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.rpg-button:hover {
+    background-color: #cd853f;
+}
+
+/* Reglas de diseño responsivo */
+@media screen and (max-width: 768px) {
+    .rpg-dialog {
+        max-width: 100%;
+        width: 90%
+    }
 }
